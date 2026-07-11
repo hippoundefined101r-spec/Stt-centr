@@ -2605,7 +2605,7 @@ async function sttSend() {
   sttMsgs.push({role: "user", content: text});
   var typing = sttAdd("печатает...", "t");
   try {
-    var res = await fetch(sttBase + "/v1/messages", {
+    var res = await fetch(sttBase, {
       method: "POST",
       headers: {"Content-Type": "application/json", "x-api-key": sttApiKey, "anthropic-version": "2023-06-01"},
       body: JSON.stringify({model: "claude-sonnet-4-6", max_tokens: 600, system: sttSystem, messages: sttMsgs})
