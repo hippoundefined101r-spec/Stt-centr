@@ -2438,7 +2438,7 @@ if (aboutSection) statsObserver.observe(aboutSection);
   }
   .stt-chat-btn:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(229,57,53,0.55); }
   .stt-chat-panel {
-    position: fixed; bottom: 160px; right: 32px; width: 340px; height: 460px;
+    position: fixed; bottom: 160px; right: 32px; width: 340px; height: 460px; display: flex !important;
     background: #0f0f0f; border: 1px solid rgba(229,57,53,0.25); border-radius: 12px;
     display: flex; flex-direction: column; z-index: 9999; overflow: hidden;
     box-shadow: 0 24px 64px rgba(0,0,0,0.8);
@@ -2507,7 +2507,7 @@ if (aboutSection) statsObserver.observe(aboutSection);
 
 <button class="stt-chat-btn" id="sttChatToggle" title="Задать вопрос консультанту">&#128295;</button>
 
-<div class="stt-chat-panel hidden" id="sttChatPanel">
+<div class="stt-chat-panel stt-closed" id="sttChatPanel">
   <div class="stt-chat-head">
     <div class="stt-chat-ava">&#9889;</div>
     <div>
@@ -2561,7 +2561,7 @@ if (aboutSection) statsObserver.observe(aboutSection);
     if (btn && panel) {
       btn.addEventListener("click", function(e) {
         e.stopPropagation();
-        panel.classList.toggle("hidden");
+        panel.classList.toggle("stt-closed");
       }, true);
     }
   }, 500);
