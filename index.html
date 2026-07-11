@@ -2424,5 +2424,195 @@ const statsObserver = new IntersectionObserver(entries => {
 const aboutSection = document.getElementById('about');
 if (aboutSection) statsObserver.observe(aboutSection);
 </script>
+
+<!-- ИИ-консультант STT Performance -->
+<style>
+  .stt-chat-btn {
+    position: fixed; bottom: 28px; right: 28px; width: 56px; height: 56px;
+    background: linear-gradient(135deg, #e53935, #b71c1c);
+    border: none; border-radius: 50%; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999; font-size: 22px;
+    box-shadow: 0 4px 20px rgba(229,57,53,0.4);
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .stt-chat-btn:hover { transform: scale(1.08); box-shadow: 0 6px 28px rgba(229,57,53,0.55); }
+  .stt-chat-panel {
+    position: fixed; bottom: 96px; right: 28px; width: 340px; height: 480px;
+    background: #0f0f0f; border: 1px solid rgba(229,57,53,0.25); border-radius: 12px;
+    display: flex; flex-direction: column; z-index: 9999; overflow: hidden;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.8);
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .stt-chat-panel.hidden { opacity: 0; pointer-events: none; transform: translateY(12px); }
+  .stt-chat-head {
+    padding: 14px 16px; background: #1a1a1a;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex; align-items: center; gap: 10px;
+  }
+  .stt-chat-ava {
+    width: 34px; height: 34px;
+    background: linear-gradient(135deg, #e53935, #b71c1c);
+    border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-size: 16px; flex-shrink: 0;
+  }
+  .stt-head-name { font-size: 13px; font-weight: 600; color: #fff; font-family: sans-serif; }
+  .stt-head-status { font-size: 11px; color: #4caf7d; font-family: sans-serif; }
+  .stt-chat-msgs {
+    flex: 1; overflow-y: auto; padding: 14px;
+    display: flex; flex-direction: column; gap: 10px;
+    scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.08) transparent;
+  }
+  .stt-msg {
+    max-width: 88%; padding: 10px 13px; border-radius: 8px;
+    font-size: 13px; line-height: 1.55; font-family: sans-serif; word-break: break-word;
+  }
+  .stt-msg.bot { background: #1e1e1e; border: 1px solid rgba(255,255,255,0.07); color: rgba(255,255,255,0.88); align-self: flex-start; }
+  .stt-msg.user { background: rgba(229,57,53,0.18); border: 1px solid rgba(229,57,53,0.25); color: #fff; align-self: flex-end; }
+  .stt-msg.typing { color: rgba(255,255,255,0.3); font-style: italic; font-size: 12px; }
+  .stt-quick-row { padding: 6px 14px 4px; display: flex; gap: 6px; flex-wrap: wrap; }
+  .stt-qbtn {
+    padding: 4px 10px; background: rgba(229,57,53,0.08);
+    border: 1px solid rgba(229,57,53,0.25); color: #e53935;
+    font-size: 11px; border-radius: 20px; cursor: pointer;
+    white-space: nowrap; font-family: sans-serif; transition: background 0.15s;
+  }
+  .stt-qbtn:hover { background: rgba(229,57,53,0.16); }
+  .stt-inp-area {
+    padding: 10px 14px; border-top: 1px solid rgba(255,255,255,0.07);
+    display: flex; gap: 8px; align-items: flex-end;
+  }
+  #sttInput {
+    flex: 1; background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; padding: 9px 12px; color: #fff;
+    font-family: sans-serif; font-size: 13px; resize: none; outline: none;
+    min-height: 38px; max-height: 80px;
+  }
+  #sttInput:focus { border-color: rgba(229,57,53,0.4); }
+  #sttInput::placeholder { color: rgba(255,255,255,0.2); }
+  #sttSendBtn {
+    width: 36px; height: 36px;
+    background: linear-gradient(135deg, #e53935, #b71c1c);
+    border: none; border-radius: 8px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; transition: opacity 0.15s;
+  }
+  #sttSendBtn:hover { opacity: 0.85; }
+  #sttSendBtn:disabled { opacity: 0.3; cursor: not-allowed; }
+  @media (max-width: 480px) {
+    .stt-chat-panel { width: calc(100vw - 24px); right: 12px; bottom: 88px; }
+    .stt-chat-btn { right: 12px; bottom: 12px; }
+  }
+</style>
+
+<button class="stt-chat-btn" id="sttChatToggle" title="Задать вопрос консультанту">&#128295;</button>
+
+<div class="stt-chat-panel hidden" id="sttChatPanel">
+  <div class="stt-chat-head">
+    <div class="stt-chat-ava">&#9889;</div>
+    <div>
+      <div class="stt-head-name">STT &mdash; Консультант</div>
+      <div class="stt-head-status">&#9679; онлайн</div>
+    </div>
+  </div>
+  <div class="stt-chat-msgs" id="sttMsgs">
+    <div class="stt-msg bot">Привет! Помогу подобрать выхлопную систему, запчасти или отвечу на любой вопрос по тюнингу &#128295;</div>
+  </div>
+  <div class="stt-quick-row" id="sttQuickRow">
+    <button class="stt-qbtn" onclick="sttSendQuick(&#39;Как подобрать выхлоп для моей машины?&#39;)">Подбор выхлопа</button>
+    <button class="stt-qbtn" onclick="sttSendQuick(&#39;Сколько стоит установка?&#39;)">Цены</button>
+    <button class="stt-qbtn" onclick="sttSendQuick(&#39;Как к вам записаться?&#39;)">Запись</button>
+  </div>
+  <div class="stt-inp-area">
+    <textarea id="sttInput" placeholder="Напишите вопрос..." rows="1"></textarea>
+    <button id="sttSendBtn">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+        <path d="M14 8L2 2l2 6-2 6 12-6z" fill="#fff"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<script>
+(function() {
+  var API_KEY = "sk-hoyCgdrCNDtkIpLQyzxKCt3DchsBtSx74mgIRQvLq1W0lpuO";
+  var BASE_URL = "https://blank.aigcbest.top";
+  var SYSTEM = "Ты консультант STT Performance в Махачкале. Отвечай по-русски, коротко — максимум 3-4 предложения. Говори как живой человек.
+
+О компании:
+- Специализация: автотюнинг, спортивные выхлопные системы, запчасти
+- Официальный дилер Stinger Sport
+- Адрес: пр. Али-Гаджи Акушинского, 355 (напротив РДР автостанции), Махачкала
+- Телефоны: +7 (928) 670-67-82, +7 (989) 482-09-09, +7 (928) 580-09-09
+- WhatsApp: +7 (989) 482-09-09
+- Instagram: @stt_center
+- Режим работы: Пн-Чт, Сб-Вс: 10:00-19:00. Пятница выходной.
+
+Ассортимент: выхлопные системы, пауки/коллекторы, резонаторы, глушители, насадки, запчасти (подвеска, тормоза), аксессуары. Партнёры: Stinger Sport, Brembo, Kayaba, NGK, Bosal, Febi Bilstein.
+
+Если хотят записаться или уточнить цену — WhatsApp: +7 (989) 482-09-09";
+
+  var msgs = [];
+  var busy = false;
+
+  document.getElementById("sttChatToggle").onclick = function() {
+    document.getElementById("sttChatPanel").classList.toggle("hidden");
+  };
+
+  document.getElementById("sttInput").addEventListener("keydown", function(e) {
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sttSend(); }
+  });
+  document.getElementById("sttSendBtn").onclick = sttSend;
+
+  window.sttSendQuick = function(text) {
+    document.getElementById("sttQuickRow").style.display = "none";
+    document.getElementById("sttInput").value = text;
+    sttSend();
+  };
+
+  function addMsg(text, role) {
+    var d = document.createElement("div");
+    d.className = "stt-msg " + role;
+    d.textContent = text;
+    var c = document.getElementById("sttMsgs");
+    c.appendChild(d);
+    c.scrollTop = c.scrollHeight;
+    return d;
+  }
+
+  async function sttSend() {
+    var inp = document.getElementById("sttInput");
+    var text = inp.value.trim();
+    if (!text || busy) return;
+    inp.value = "";
+    busy = true;
+    document.getElementById("sttSendBtn").disabled = true;
+    addMsg(text, "user");
+    msgs.push({ role: "user", content: text });
+    var typing = addMsg("печатает...", "bot typing");
+    try {
+      var res = await fetch(BASE_URL + "/v1/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": API_KEY,
+          "anthropic-version": "2023-06-01"
+        },
+        body: JSON.stringify({ model: "claude-sonnet-4-6", max_tokens: 600, system: SYSTEM, messages: msgs })
+      });
+      var data = await res.json();
+      var reply = (data && data.content && data.content[0] && data.content[0].text) || "Напишите нам в WhatsApp: +7 (989) 482-09-09";
+      typing.remove();
+      addMsg(reply, "bot");
+      msgs.push({ role: "assistant", content: reply });
+    } catch(e) {
+      typing.remove();
+      addMsg("Ошибка соединения. WhatsApp: +7 (989) 482-09-09", "bot");
+    }
+    busy = false;
+    document.getElementById("sttSendBtn").disabled = false;
+  }
+})();
+<\/script>
 </body>
 </html>
