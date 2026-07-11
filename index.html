@@ -2428,7 +2428,7 @@ if (aboutSection) statsObserver.observe(aboutSection);
 <!-- ИИ-консультант STT Performance -->
 <style>
   .stt-chat-btn {
-    position: fixed; bottom: 96px; right: 32px; width: 52px; height: 52px;
+    position: fixed; bottom: 96px; right: 32px; width: 52px; height: 52px; cursor: pointer !important;
     background: linear-gradient(135deg, #e53935, #b71c1c);
     border: none; border-radius: 50%; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
@@ -2555,9 +2555,16 @@ if (aboutSection) statsObserver.observe(aboutSection);
   var msgs = [];
   var busy = false;
 
-  document.getElementById("sttChatToggle").onclick = function() {
-    document.getElementById("sttChatPanel").classList.toggle("hidden");
-  };
+  setTimeout(function() {
+    var btn = document.getElementById("sttChatToggle");
+    var panel = document.getElementById("sttChatPanel");
+    if (btn && panel) {
+      btn.addEventListener("click", function(e) {
+        e.stopPropagation();
+        panel.classList.toggle("hidden");
+      }, true);
+    }
+  }, 500);
 
   document.getElementById("sttInput").addEventListener("keydown", function(e) {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sttSend(); }
