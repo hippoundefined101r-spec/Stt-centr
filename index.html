@@ -79,15 +79,30 @@ body.cursor-hover #cursor-ring {
 }
 
 /* ── SCROLL PROGRESS ── */
-#scroll-progress {
+#tacho {
   position: fixed;
-  top: 0; left: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--red), #ff4444);
-  z-index: 1000;
-  width: 0%;
-  transition: width 0.1s linear;
-  box-shadow: 0 0 10px var(--red);
+  left: 22px; bottom: 22px;
+  width: 106px; height: 106px;
+  z-index: 900;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  filter: drop-shadow(0 6px 18px rgba(0,0,0,0.55));
+}
+#tacho.on { opacity: 0.92; }
+#tacho svg { width: 100%; height: 100%; display: block; }
+#tacho .tacho-face { fill: rgba(10,10,10,0.78); stroke: rgba(255,255,255,0.1); stroke-width: 1; }
+#tacho .tick { stroke: rgba(255,255,255,0.35); stroke-width: 2; }
+#tacho .tick.red { stroke: var(--red); }
+#tacho .tnum { font-family: var(--font-sub); font-size: 10px; fill: rgba(255,255,255,0.55); text-anchor: middle; dominant-baseline: central; }
+#tacho .tnum.red { fill: var(--red); }
+#tacho .redzone { stroke: var(--red); stroke-width: 4; fill: none; opacity: 0.9; }
+#tachoNeedle { stroke: #ff2230; stroke-width: 2.5; stroke-linecap: round; transition: transform 0.12s linear; filter: drop-shadow(0 0 4px rgba(227,6,19,0.8)); }
+#tachoNeedle.rev { transition: transform 0.55s cubic-bezier(0.34, 1.2, 0.64, 1); }
+#tacho .cap { fill: #141414; stroke: var(--red); stroke-width: 1.5; }
+#tacho .tacho-brand { font-family: var(--font-display); font-size: 9px; letter-spacing: 0.25em; fill: rgba(255,255,255,0.3); text-anchor: middle; }
+@media (max-width: 600px) {
+  #tacho { width: 72px; height: 72px; left: 10px; bottom: 10px; }
 }
 
 /* ── LOADER ── */
@@ -326,7 +341,7 @@ nav.scrolled {
 .hero-bg-img {
   position: absolute;
   inset: -10%;
-  background-image: url('https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=1920&q=80');
+  background-image: url('https://images.unsplash.com/photo-1544636331-e26879cd4d9b?auto=format&fit=crop&w=1920&q=80');
   background-size: cover;
   background-position: center 40%;
   background-repeat: no-repeat;
@@ -425,6 +440,7 @@ nav.scrolled {
 @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 .hero-title {
   font-family: var(--font-display);
+  font-weight: 600;
   font-size: clamp(68px, 10vw, 130px);
   line-height: 0.92;
   letter-spacing: 0.02em;
@@ -542,6 +558,7 @@ section {
 }
 .section-title {
   font-family: var(--font-display);
+  font-weight: 600;
   font-size: clamp(52px, 7vw, 96px);
   line-height: 0.92;
   letter-spacing: 0.02em;
@@ -862,49 +879,41 @@ section {
   border-bottom: 1px solid var(--border);
   padding: 80px 6%;
 }
-.brands-row {
+.brands-marquee {
+  margin-top: 56px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+.brands-track {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 60px;
-  flex-wrap: wrap;
-  margin-top: 48px;
+  width: max-content;
+  animation: brandScroll 30s linear infinite;
 }
-.brand-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  opacity: 0.35;
-  filter: grayscale(1);
-  transition: opacity 0.35s, filter 0.35s, transform 0.35s var(--transition-bounce);
-  cursor: none;
-}
-.brand-item:hover { opacity: 1; filter: grayscale(0); transform: scale(1.08); }
-.brand-logo-box {
-  width: 120px; height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 2px;
-  padding: 12px;
-}
-.brand-logo-box span {
+.brands-marquee:hover .brands-track { animation-play-state: paused; }
+.brands-track span {
   font-family: var(--font-display);
-  font-size: 18px;
-  letter-spacing: 0.1em;
-  color: var(--white);
-}
-.brand-item:hover .brand-logo-box { border-color: rgba(227,6,19,0.3); }
-.brand-label {
-  font-family: var(--font-sub);
-  font-size: 10px;
-  letter-spacing: 0.18em;
+  font-size: clamp(36px, 5vw, 62px);
+  font-weight: 600;
   text-transform: uppercase;
-  color: var(--white30, rgba(255,255,255,0.3));
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  margin-right: 52px;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255,255,255,0.25);
+  transition: color 0.35s;
 }
+.brands-track span:hover { color: rgba(255,255,255,0.9); }
+.brands-track i {
+  width: 8px; height: 8px;
+  background: var(--red);
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-right: 52px;
+  box-shadow: 0 0 12px var(--red-glow);
+}
+@keyframes brandScroll { to { transform: translateX(-50%); } }
 
 /* ── PROCESS ── */
 #process { background: var(--dark); }
@@ -1462,9 +1471,7 @@ footer {
   .why-card { padding: 28px 24px; }
 
   /* Brands */
-  .brands-row { gap: 16px; }
-  .brand-logo-box { width: 90px; height: 44px; }
-  .brand-logo-box span { font-size: 14px; }
+  .brands-marquee { margin-top: 36px; }
 
   /* Process */
   .process-card { padding: 28px 24px; }
@@ -1504,8 +1511,17 @@ footer {
 <div id="cursor"></div>
 <div id="cursor-ring"></div>
 
-<!-- Scroll Progress -->
-<div id="scroll-progress"></div>
+<!-- Тахометр: прогресс прокрутки -->
+<div id="tacho" aria-hidden="true">
+  <svg viewBox="0 0 120 120">
+    <circle class="tacho-face" cx="60" cy="60" r="56"/>
+    <g id="tachoTicks"></g>
+    <path id="tachoRedzone" class="redzone"/>
+    <text class="tacho-brand" x="60" y="88">STT</text>
+    <line id="tachoNeedle" x1="60" y1="60" x2="60" y2="19"/>
+    <circle class="cap" cx="60" cy="60" r="5"/>
+  </svg>
+</div>
 
 <!-- Loader -->
 <div id="loader">
@@ -1642,24 +1658,24 @@ footer {
     </div>
     <div class="about-right reveal reveal-delay-2">
       <div class="about-photo-wrap">
-        <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1200&q=80" alt="STT Performance — профессиональный тюнинг" class="about-photo" loading="lazy">
+        <img src="https://images.unsplash.com/photo-1625047509248-ec889cbff17f?auto=format&fit=crop&w=1200&q=80" alt="STT Performance — профессиональный тюнинг" class="about-photo" loading="lazy">
         <div class="about-photo-overlay"></div>
-      </div>
-      <div class="stat-cell">
-        <span class="stat-num">10<em>+</em></span>
-        <span class="stat-label">Лет на рынке</span>
-      </div>
-      <div class="stat-cell">
-        <span class="stat-num">2<em>K</em></span>
-        <span class="stat-label">Довольных клиентов</span>
       </div>
       <div class="stat-cell">
         <span class="stat-num">500<em>+</em></span>
         <span class="stat-label">Наименований в каталоге</span>
       </div>
       <div class="stat-cell">
-        <span class="stat-num">1<em>%</em></span>
-        <span class="stat-label">Процент возврата</span>
+        <span class="stat-num">6</span>
+        <span class="stat-label">Мировых брендов-партнёров</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-num">1</span>
+        <span class="stat-label">День на установку под ключ</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-num">100<em>%</em></span>
+        <span class="stat-label">Гарантия на товары и работы</span>
       </div>
     </div>
   </div>
@@ -1878,42 +1894,9 @@ footer {
 <section id="brands">
   <div class="section-eyebrow reveal" style="justify-content:center">Наши партнёры</div>
   <h2 class="section-title reveal reveal-delay-1" style="text-align:center">БРЕНДЫ <em>КОТОРЫМ</em><br>МЫ ДОВЕРЯЕМ</h2>
-  <div class="brands-row">
-    <div class="brand-item reveal">
-      <div class="brand-logo-box">
-        <span>STINGER</span>
-      </div>
-      <span class="brand-label">Stinger Sport</span>
-    </div>
-    <div class="brand-item reveal reveal-delay-1">
-      <div class="brand-logo-box">
-        <span>BOSAL</span>
-      </div>
-      <span class="brand-label">Bosal</span>
-    </div>
-    <div class="brand-item reveal reveal-delay-2">
-      <div class="brand-logo-box">
-        <span>BREMBO</span>
-      </div>
-      <span class="brand-label">Brembo</span>
-    </div>
-    <div class="brand-item reveal reveal-delay-3">
-      <div class="brand-logo-box">
-        <span>KAYABA</span>
-      </div>
-      <span class="brand-label">Kayaba</span>
-    </div>
-    <div class="brand-item reveal reveal-delay-4">
-      <div class="brand-logo-box">
-        <span>NGK</span>
-      </div>
-      <span class="brand-label">NGK</span>
-    </div>
-    <div class="brand-item reveal reveal-delay-5">
-      <div class="brand-logo-box">
-        <span>FEBI</span>
-      </div>
-      <span class="brand-label">Febi Bilstein</span>
+  <div class="brands-marquee reveal">
+    <div class="brands-track">
+      <span>Stinger Sport</span><i></i><span>Bosal</span><i></i><span>Brembo</span><i></i><span>Kayaba</span><i></i><span>NGK</span><i></i><span>Febi Bilstein</span><i></i><span>Stinger Sport</span><i></i><span>Bosal</span><i></i><span>Brembo</span><i></i><span>Kayaba</span><i></i><span>NGK</span><i></i><span>Febi Bilstein</span><i></i>
     </div>
   </div>
 </section>
@@ -2240,12 +2223,54 @@ window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', window.scrollY > 50);
 }, { passive: true });
 
-// ── SCROLL PROGRESS ──
-const prog = document.getElementById('scroll-progress');
-window.addEventListener('scroll', () => {
-  const pct = window.scrollY / (document.documentElement.scrollHeight - window.innerHeight) * 100;
-  prog.style.width = pct + '%';
-}, { passive: true });
+// ── ТАХОМЕТР: стрелка = прогресс прокрутки ──
+(function() {
+  const tacho = document.getElementById('tacho');
+  const needle = document.getElementById('tachoNeedle');
+  const ticksG = document.getElementById('tachoTicks');
+  if (!tacho) return;
+  const NS = 'http://www.w3.org/2000/svg';
+  const A0 = -120, A1 = 120, MAX = 8, REDFROM = 6.5;
+  const pt = (ang, r) => {
+    const a = (ang - 90) * Math.PI / 180;
+    return [60 + r * Math.cos(a), 60 + r * Math.sin(a)];
+  };
+  for (let v = 0; v <= MAX; v++) {
+    const ang = A0 + (A1 - A0) * v / MAX;
+    const [x1, y1] = pt(ang, 52), [x2, y2] = pt(ang, 45);
+    const t = document.createElementNS(NS, 'line');
+    t.setAttribute('x1', x1); t.setAttribute('y1', y1);
+    t.setAttribute('x2', x2); t.setAttribute('y2', y2);
+    t.setAttribute('class', 'tick' + (v >= REDFROM ? ' red' : ''));
+    ticksG.appendChild(t);
+    const [nx, ny] = pt(ang, 35);
+    const n = document.createElementNS(NS, 'text');
+    n.setAttribute('x', nx); n.setAttribute('y', ny);
+    n.setAttribute('class', 'tnum' + (v >= REDFROM ? ' red' : ''));
+    n.textContent = v;
+    ticksG.appendChild(n);
+  }
+  const rzStart = A0 + (A1 - A0) * REDFROM / MAX;
+  const [sx, sy] = pt(rzStart, 55), [ex, ey] = pt(A1, 55);
+  document.getElementById('tachoRedzone').setAttribute('d', `M ${sx} ${sy} A 55 55 0 0 1 ${ex} ${ey}`);
+  let revving = true;
+  const setAngle = a => needle.setAttribute('transform', `rotate(${a} 60 60)`);
+  setAngle(A0);
+  function onScroll() {
+    if (revving) return;
+    const pct = Math.min(1, Math.max(0, window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)));
+    setAngle(A0 + (A1 - A0) * pct);
+  }
+  // «Прогрев»: стрелка бьёт в отсечку и возвращается
+  window.addEventListener('load', () => {
+    tacho.classList.add('on');
+    needle.classList.add('rev');
+    setTimeout(() => setAngle(A1), 1250);
+    setTimeout(() => setAngle(A0), 1900);
+    setTimeout(() => { needle.classList.remove('rev'); revving = false; onScroll(); }, 2550);
+  });
+  window.addEventListener('scroll', onScroll, { passive: true });
+})();
 
 // ── ACTIVE NAV ──
 const sections = document.querySelectorAll('section[id]');
