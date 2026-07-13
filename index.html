@@ -7,9 +7,13 @@
 <meta property="og:title" content="СТТ Performance — Профессиональный Автотюнинг">
 <meta property="og:description" content="Официальный дилер Stinger Sport в Махачкале. Спортивные выхлопные системы, тюнинг, профессиональная установка.">
 <meta property="og:type" content="website">
+<meta property="og:url" content="https://hippoundefined101r-spec.github.io/Stt-centr/">
+<meta property="og:image" content="https://hippoundefined101r-spec.github.io/Stt-centr/logo.jpg">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="favicon.png">
 <title>СТТ Performance — Профессиональный Автотюнинг | Махачкала</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Oswald:wght@400;500;600;700&family=Play:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Oswald:wght@400;500;600&family=Play:wght@400;700&display=swap" rel="stylesheet">
 <style>
 :root {
   --black: #080808;
@@ -450,6 +454,7 @@ nav.scrolled {
 .hero-title-red { color: var(--red); display: block; }
 .hero-sub {
   font-family: var(--font-display);
+  font-weight: 500;
   font-size: clamp(28px, 4vw, 52px);
   letter-spacing: 0.08em;
   color: var(--white50);
@@ -1214,6 +1219,22 @@ section {
   transition: color 0.25s;
 }
 .contact-val:hover { color: var(--red); }
+.contact-map iframe { pointer-events: none; }
+.contact-map.map-active iframe { pointer-events: auto; }
+.map-hint {
+  position: absolute;
+  left: 0; right: 0; bottom: 52px;
+  text-align: center;
+  font-family: var(--font-sub);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.45);
+  background: rgba(8,8,8,0.65);
+  padding: 6px 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+.contact-map.map-active .map-hint { opacity: 0; }
 .contact-map {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -1504,6 +1525,30 @@ footer {
   *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
 }
 </style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "AutoPartsStore",
+  "name": "СТТ Performance",
+  "image": "https://hippoundefined101r-spec.github.io/Stt-centr/logo.jpg",
+  "url": "https://hippoundefined101r-spec.github.io/Stt-centr/",
+  "telephone": "+79286706782",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "пр. Али-Гаджи Акушинского, 355",
+    "addressLocality": "Махачкала",
+    "addressRegion": "Республика Дагестан",
+    "addressCountry": "RU"
+  },
+  "geo": { "@type": "GeoCoordinates", "latitude": 42.97078, "longitude": 47.416626 },
+  "openingHoursSpecification": [{
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Saturday","Sunday"],
+    "opens": "10:00", "closes": "19:00"
+  }],
+  "sameAs": ["https://instagram.com/stt_center"]
+}
+</script>
 </head>
 <body>
 
@@ -1688,7 +1733,7 @@ footer {
       <div class="section-eyebrow reveal">Каталог</div>
       <h2 class="section-title reveal reveal-delay-1">НАШ<br><em>АССОРТИМЕНТ</em></h2>
     </div>
-    <a href="#contacts" class="btn btn-outline reveal reveal-delay-2">Все категории</a>
+    <a href="https://wa.me/79894820909?text=%D0%97%D0%B4%D1%80%D0%B0%D0%B2%D1%81%D1%82%D0%B2%D1%83%D0%B9%D1%82%D0%B5!%20%D0%98%D0%BD%D1%82%D0%B5%D1%80%D0%B5%D1%81%D1%83%D0%B5%D1%82%20%D0%BD%D0%B0%D0%BB%D0%B8%D1%87%D0%B8%D0%B5" target="_blank" rel="noopener" class="btn btn-outline reveal reveal-delay-2">Уточнить наличие</a>
   </div>
 
   <div class="catalog-grid">
@@ -2109,6 +2154,7 @@ footer {
 
     <div class="contact-map reveal reveal-delay-2">
       <iframe src="https://yandex.ru/map-widget/v1/?ll=47.416626%2C42.970780&z=17&pt=47.416626,42.970780,pm2rdm" width="100%" height="100%" frameborder="0" style="flex:1;min-height:300px;border:0;filter:grayscale(0.85) invert(0.92) contrast(0.9);" loading="lazy" title="СТТ Performance на карте"></iframe>
+      <div class="map-hint">Нажмите, чтобы двигать карту</div>
 </section>
 
 <!-- FOOTER -->
@@ -2222,6 +2268,10 @@ const nav = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
   nav.classList.toggle('scrolled', window.scrollY > 50);
 }, { passive: true });
+
+// ── КАРТА: активация по клику, чтобы не перехватывала скролл ──
+const mapWrap = document.querySelector('.contact-map');
+if (mapWrap) mapWrap.addEventListener('click', () => mapWrap.classList.add('map-active'), { once: true });
 
 // ── ТАХОМЕТР: стрелка = прогресс прокрутки ──
 (function() {
