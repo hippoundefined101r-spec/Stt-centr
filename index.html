@@ -2490,5 +2490,131 @@ if (aboutSection) statsObserver.observe(aboutSection);
 </script>
 
 
+<!-- ===== AI Консультант STT ===== -->
+<style>
+#stt-ai-btn{position:fixed;right:20px;bottom:20px;z-index:9998;width:60px;height:60px;border-radius:50%;background:var(--red,#E30613);border:none;cursor:pointer;box-shadow:0 4px 20px rgba(227,6,19,.45);display:flex;align-items:center;justify-content:center;transition:transform .25s}
+#stt-ai-btn:hover{transform:scale(1.08)}
+#stt-ai-btn svg{width:28px;height:28px;fill:#fff}
+#stt-ai-panel{position:fixed;right:16px;bottom:90px;z-index:9999;width:360px;max-width:calc(100vw - 32px);height:520px;max-height:calc(100vh - 120px);background:#0E0F11;border:1px solid rgba(255,255,255,.1);border-radius:16px;display:none;flex-direction:column;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.6)}
+#stt-ai-panel.open{display:flex}
+#stt-ai-head{padding:14px 16px;background:#17191C;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
+#stt-ai-head .dot{width:9px;height:9px;border-radius:50%;background:#2ecc71;flex-shrink:0}
+#stt-ai-head .t{font-family:'Oswald','Arial Narrow',sans-serif;font-size:15px;letter-spacing:.08em;color:#fff;text-transform:uppercase}
+#stt-ai-head .s{font-family:'Inter',sans-serif;font-size:11px;color:rgba(255,255,255,.45);margin-left:auto}
+#stt-ai-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
+.stt-msg{max-width:85%;padding:10px 13px;border-radius:12px;font-family:'Inter',sans-serif;font-size:13.5px;line-height:1.45;white-space:pre-wrap;word-wrap:break-word}
+.stt-msg.user{align-self:flex-end;background:#E30613;color:#fff;border-bottom-right-radius:4px}
+.stt-msg.bot{align-self:flex-start;background:#17191C;color:rgba(255,255,255,.9);border:1px solid rgba(255,255,255,.07);border-bottom-left-radius:4px}
+.stt-msg.err{align-self:flex-start;background:rgba(227,6,19,.12);color:#ff8a8a;border:1px solid rgba(227,6,19,.4);font-size:12px}
+.stt-typing span{display:inline-block;width:6px;height:6px;margin:0 2px;border-radius:50%;background:rgba(255,255,255,.5);animation:sttB 1.2s infinite}
+.stt-typing span:nth-child(2){animation-delay:.2s}.stt-typing span:nth-child(3){animation-delay:.4s}
+@keyframes sttB{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+#stt-ai-input{display:flex;gap:8px;padding:12px;background:#17191C;border-top:1px solid rgba(255,255,255,.08)}
+#stt-ai-input input{flex:1;background:#0E0F11;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-family:'Inter',sans-serif;font-size:14px;outline:none}
+#stt-ai-input input:focus{border-color:rgba(227,6,19,.6)}
+#stt-ai-input button{background:#E30613;border:none;border-radius:10px;width:44px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+#stt-ai-input button:disabled{opacity:.5;cursor:default}
+#stt-ai-input button svg{width:18px;height:18px;fill:#fff}
+@media(max-width:480px){#stt-ai-panel{right:8px;bottom:82px;height:70vh}}
+</style>
+<button id="stt-ai-btn" aria-label="Чат с консультантом">
+  <svg viewBox="0 0 24 24"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-3 9H7V9h10v2zm0-3H7V6h10v2z"/></svg>
+</button>
+<div id="stt-ai-panel">
+  <div id="stt-ai-head"><div class="dot"></div><div class="t">Консультант STT</div><div class="s">онлайн</div></div>
+  <div id="stt-ai-msgs"></div>
+  <div id="stt-ai-input">
+    <input type="text" id="stt-ai-text" placeholder="Ваш вопрос..." maxlength="500">
+    <button id="stt-ai-send" aria-label="Отправить"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
+  </div>
+</div>
+<script>
+(function(){
+  var API_URL = "https://blank.aigcbest.top/v1/messages";
+  var API_KEY = "sk-hoyCgdrCNDtkIpLQyzxKCt3DchsBtSx74mgIRQvLq1WOlpuO";
+  var SYSTEM = "Ты — консультант магазина автотюнинга STT Performance в Махачкале (пр. Али-Гаджи Акушинского, 355, напротив РДР автостанции). Официальный дилер Stinger Sport. Специализация: спортивные выхлопные системы (полные комплекты, пауки/коллекторы 4-1 и 4-2-1, резонаторы, прямоточные глушители, насадки из нержавейки), а также запчасти, тормоза (Brembo и др.), подвеска (Kayaba, Bilstein). Работаем с отечественными авто и иномарками. Установка под ключ за 1 день, гарантия на товары и работы. Бренды: Stinger Sport, Bosal, Brembo, Kayaba, NGK, Febi, Bilstein. Режим: Пн-Чт и Сб-Вс 10:00-19:00, пятница выходной. Телефоны: +7 (928) 670-67-82, +7 (989) 482-09-09. WhatsApp: +7 (989) 482-09-09. Instagram: @stt_center. Правила: отвечай коротко, 1-3 предложения, по-русски, дружелюбно и по делу. Точных цен не называй — предлагай позвонить или написать в WhatsApp для расчёта. Если вопрос не про автотюнинг/запчасти — вежливо верни разговор к теме магазина.";
+  var history = [];
+  var btn = document.getElementById('stt-ai-btn');
+  var panel = document.getElementById('stt-ai-panel');
+  var msgs = document.getElementById('stt-ai-msgs');
+  var input = document.getElementById('stt-ai-text');
+  var send = document.getElementById('stt-ai-send');
+  var busy = false;
+
+  function add(cls, text){
+    var d = document.createElement('div');
+    d.className = 'stt-msg ' + cls;
+    d.textContent = text;
+    msgs.appendChild(d);
+    msgs.scrollTop = msgs.scrollHeight;
+    return d;
+  }
+
+  btn.addEventListener('click', function(){
+    panel.classList.toggle('open');
+    if (panel.classList.contains('open') && !msgs.children.length) {
+      add('bot', 'Здравствуйте! Я консультант STT Performance. Подскажу по выхлопным системам, запчастям и установке. Что у вас за автомобиль?');
+    }
+  });
+
+  function ask(){
+    var text = input.value.trim();
+    if (!text || busy) return;
+    input.value = '';
+    add('user', text);
+    history.push({role:'user', content:text});
+    if (history.length > 10) history = history.slice(-10);
+
+    busy = true; send.disabled = true;
+    var typing = add('bot stt-typing', '');
+    typing.innerHTML = '<span></span><span></span><span></span>';
+
+    fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': API_KEY,
+        'Authorization': 'Bearer ' + API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 300,
+        system: SYSTEM,
+        messages: history
+      })
+    })
+    .then(function(r){
+      if (!r.ok) return r.text().then(function(t){ throw new Error('HTTP ' + r.status + ': ' + t.slice(0,200)); });
+      return r.json();
+    })
+    .then(function(data){
+      typing.remove();
+      var reply = '';
+      if (data.content && data.content.length) {
+        for (var i = 0; i < data.content.length; i++) {
+          if (data.content[i].type === 'text') reply += data.content[i].text;
+        }
+      }
+      if (!reply) throw new Error('Пустой ответ: ' + JSON.stringify(data).slice(0,200));
+      add('bot', reply);
+      history.push({role:'assistant', content:reply});
+    })
+    .catch(function(e){
+      typing.remove();
+      var msg = e.message || String(e);
+      if (msg === 'Failed to fetch') msg = 'Failed to fetch — скорее всего CORS: прокси не пускает запросы из браузера. Нужен Cloudflare Worker.';
+      add('err', 'Ошибка: ' + msg);
+      history.pop();
+    })
+    .finally(function(){ busy = false; send.disabled = false; input.focus(); });
+  }
+
+  send.addEventListener('click', ask);
+  input.addEventListener('keydown', function(e){ if (e.key === 'Enter') ask(); });
+})();
+</script>
+<!-- ===== /AI Консультант ===== -->
+
 </body>
 </html>
