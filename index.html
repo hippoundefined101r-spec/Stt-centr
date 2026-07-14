@@ -2495,7 +2495,7 @@ if (aboutSection) statsObserver.observe(aboutSection);
 #stt-ai-btn{position:fixed;right:20px;bottom:20px;z-index:9998;width:60px;height:60px;border-radius:50%;background:var(--red,#E30613);border:none;cursor:pointer;box-shadow:0 4px 20px rgba(227,6,19,.45);display:flex;align-items:center;justify-content:center;transition:transform .25s}
 #stt-ai-btn:hover{transform:scale(1.08)}
 #stt-ai-btn svg{width:28px;height:28px;fill:#fff}
-#stt-ai-panel{position:fixed;right:16px;bottom:90px;z-index:9999;width:360px;max-width:calc(100vw - 32px);height:520px;max-height:calc(100vh - 120px);background:#0E0F11;border:1px solid rgba(255,255,255,.1);border-radius:16px;display:none;flex-direction:column;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.6)}
+#stt-ai-panel{position:fixed;right:16px;bottom:90px;z-index:9999;width:360px;max-width:calc(100vw - 32px);height:540px;max-height:calc(100vh - 120px);background:#0E0F11;border:1px solid rgba(255,255,255,.1);border-radius:16px;display:none;flex-direction:column;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.6)}
 #stt-ai-panel.open{display:flex}
 #stt-ai-head{padding:14px 16px;background:#17191C;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:10px}
 #stt-ai-head .dot{width:9px;height:9px;border-radius:50%;background:#2ecc71;flex-shrink:0}
@@ -2509,20 +2509,31 @@ if (aboutSection) statsObserver.observe(aboutSection);
 .stt-typing span{display:inline-block;width:6px;height:6px;margin:0 2px;border-radius:50%;background:rgba(255,255,255,.5);animation:sttB 1.2s infinite}
 .stt-typing span:nth-child(2){animation-delay:.2s}.stt-typing span:nth-child(3){animation-delay:.4s}
 @keyframes sttB{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-5px)}}
+#stt-ai-chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 4px}
+.stt-chip{background:transparent;border:1px solid rgba(227,6,19,.55);color:rgba(255,255,255,.85);border-radius:20px;padding:7px 12px;font-family:'Inter',sans-serif;font-size:12.5px;cursor:pointer;transition:background .2s}
+.stt-chip:hover{background:rgba(227,6,19,.18)}
+#stt-ai-wa{display:none;margin:0 14px 10px;background:#25D366;color:#fff;border:none;border-radius:10px;padding:11px;font-family:'Inter',sans-serif;font-size:13.5px;font-weight:600;cursor:pointer;align-items:center;justify-content:center;gap:8px}
+#stt-ai-wa.show{display:flex}
+#stt-ai-wa svg{width:18px;height:18px;fill:#fff}
 #stt-ai-input{display:flex;gap:8px;padding:12px;background:#17191C;border-top:1px solid rgba(255,255,255,.08)}
 #stt-ai-input input{flex:1;background:#0E0F11;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 12px;color:#fff;font-family:'Inter',sans-serif;font-size:14px;outline:none}
 #stt-ai-input input:focus{border-color:rgba(227,6,19,.6)}
 #stt-ai-input button{background:#E30613;border:none;border-radius:10px;width:44px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 #stt-ai-input button:disabled{opacity:.5;cursor:default}
 #stt-ai-input button svg{width:18px;height:18px;fill:#fff}
-@media(max-width:480px){#stt-ai-panel{right:8px;bottom:82px;height:70vh}}
+@media(max-width:480px){#stt-ai-panel{right:8px;bottom:82px;height:72vh}}
 </style>
 <button id="stt-ai-btn" aria-label="Чат с консультантом">
   <svg viewBox="0 0 24 24"><path d="M20 2H4a2 2 0 0 0-2 2v18l4-4h14a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-3 9H7V9h10v2zm0-3H7V6h10v2z"/></svg>
 </button>
 <div id="stt-ai-panel">
-  <div id="stt-ai-head"><div class="dot"></div><div class="t">Консультант STT</div><div class="s">онлайн</div></div>
+  <div id="stt-ai-head"><div class="dot"></div><div class="t">Мурад · STT</div><div class="s">онлайн</div></div>
   <div id="stt-ai-msgs"></div>
+  <div id="stt-ai-chips"></div>
+  <button id="stt-ai-wa">
+    <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 0-8.7 14.9L2 22l5.3-1.4A10 10 0 1 0 12 2zm5.4 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .2-3.4-.7-2.9-1.1-4.7-4-4.9-4.2-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.4l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.1.2-.3.3-.1.6.2.3.8 1.4 1.8 2.2 1.2 1.1 2.3 1.4 2.6 1.6.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2 1c.3.1.5.2.6.4 0 .1 0 .8-.2 1.4z"/></svg>
+    Отправить заявку в WhatsApp
+  </button>
   <div id="stt-ai-input">
     <input type="text" id="stt-ai-text" placeholder="Ваш вопрос..." maxlength="500">
     <button id="stt-ai-send" aria-label="Отправить"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
@@ -2532,14 +2543,25 @@ if (aboutSection) statsObserver.observe(aboutSection);
 (function(){
   var API_URL = "https://blank.aigcbest.top/v1/messages";
   var API_KEY = "sk-hoyCgdrCNDtkIpLQyzxKCt3DchsBtSx74mgIRQvLq1WOlpuO";
-  var SYSTEM = "Ты — консультант магазина автотюнинга STT Performance в Махачкале (пр. Али-Гаджи Акушинского, 355, напротив РДР автостанции). Официальный дилер Stinger Sport. Специализация: спортивные выхлопные системы (полные комплекты, пауки/коллекторы 4-1 и 4-2-1, резонаторы, прямоточные глушители, насадки из нержавейки), а также запчасти, тормоза (Brembo и др.), подвеска (Kayaba, Bilstein). Работаем с отечественными авто и иномарками. Установка под ключ за 1 день, гарантия на товары и работы. Бренды: Stinger Sport, Bosal, Brembo, Kayaba, NGK, Febi, Bilstein. Режим: Пн-Чт и Сб-Вс 10:00-19:00, пятница выходной. Телефоны: +7 (928) 670-67-82, +7 (989) 482-09-09. WhatsApp: +7 (989) 482-09-09. Instagram: @stt_center. Правила: отвечай коротко, 1-3 предложения, по-русски, дружелюбно и по делу. Точных цен не называй — предлагай позвонить или написать в WhatsApp для расчёта. Если вопрос не про автотюнинг/запчасти — вежливо верни разговор к теме магазина.";
+  var WA_PHONE = "79894820909";
+  var GREETING = "Ассаляму алейкум! Я Мурад из STT 👋 Помогу подобрать выхлоп, паук, глушак — и по установке подскажу. Что за машина?";
+  var SYSTEM = "Ты — Мурад, консультант магазина автотюнинга STT Performance в Махачкале (пр. Али-Гаджи Акушинского, 355, напротив РДР автостанции). Официальный дилер Stinger Sport. Специализация: спортивные выхлопные системы (полные комплекты, пауки/коллекторы 4-1 и 4-2-1, резонаторы, прямоточные глушители, банки, насадки из нержавейки), запчасти, тормоза (Brembo), подвеска (Kayaba, Bilstein). Работаем с ВАЗ и иномарками. Установка под ключ за 1 день, гарантия на товары и работы. Бренды: Stinger Sport, Bosal, Brembo, Kayaba, NGK, Febi, Bilstein. Режим: Пн-Чт и Сб-Вс 10:00-19:00, пятница — выходной. Телефоны: +7 (928) 670-67-82, +7 (989) 482-09-09. WhatsApp: +7 (989) 482-09-09. Instagram: @stt_center. ХАРАКТЕР: ты свой пацан, реально шаришь за тачки и выхлоп, общаешься живо и по-простому, как в гараже с хорошим клиентом. Говоришь на языке клиента: паук, банка, прямоток, злой звук. Без канцелярита, без длинных лекций. Но ты лицо магазина: никакого мата, никакой грубости, не перегибай с дерзостью. ОБРАЩЕНИЕ: зеркаль клиента — если он на ты, отвечай на ты; если на вы, переходи на вы и держи чуть более вежливый тон. ПРАВИЛА: отвечай коротко, 1-3 предложения. Точные цены НЕ называй и не выдумывай — говори, что посчитаем быстро, и предлагай нажать зелёную кнопку WhatsApp внизу чата или позвонить. Узнавай машину клиента, если ещё не знаешь. Каждые пару сообщений мягко, без давления, подводи к заявке: мол, кинь заявку в WhatsApp, там сразу по твоей машине посчитаем. Если спрашивают как найти — давай адрес и ориентир. Если вопрос не про машины/тюнинг/магазин — вежливо и с юмором возвращай к теме. На приветствия типа салам/ассаляму алейкум отвечай ваалейкум ассалям.";
   var history = [];
   var btn = document.getElementById('stt-ai-btn');
   var panel = document.getElementById('stt-ai-panel');
   var msgs = document.getElementById('stt-ai-msgs');
+  var chips = document.getElementById('stt-ai-chips');
+  var waBtn = document.getElementById('stt-ai-wa');
   var input = document.getElementById('stt-ai-text');
   var send = document.getElementById('stt-ai-send');
   var busy = false;
+
+  function save(){
+    try { sessionStorage.setItem('sttChat', JSON.stringify(history)); } catch(e){}
+  }
+  function load(){
+    try { return JSON.parse(sessionStorage.getItem('sttChat') || '[]'); } catch(e){ return []; }
+  }
 
   function add(cls, text){
     var d = document.createElement('div');
@@ -2550,11 +2572,58 @@ if (aboutSection) statsObserver.observe(aboutSection);
     return d;
   }
 
+  function waLink(){
+    var userMsgs = [];
+    for (var i = 0; i < history.length; i++) {
+      if (history[i].role === 'user') userMsgs.push(history[i].content);
+    }
+    var summary = userMsgs.slice(-3).join('; ').slice(0, 250);
+    var text = 'Ассаляму алейкум! Пишу с сайта STT.' + (summary ? ' Интересует: ' + summary : ' Хочу узнать по выхлопу/запчастям.');
+    return 'https://wa.me/' + WA_PHONE + '?text=' + encodeURIComponent(text);
+  }
+  waBtn.addEventListener('click', function(){ window.open(waLink(), '_blank'); });
+
+  var QUICK = [
+    {label:'Прямоток на ВАЗ', send:'Интересует прямоток на ВАЗ'},
+    {label:'На иномарку', send:'Есть варианты выхлопа на иномарку?'},
+    {label:'Как вас найти', send:'Как вас найти?'},
+    {label:'📲 Оставить заявку', wa:true}
+  ];
+  function renderChips(){
+    chips.innerHTML = '';
+    QUICK.forEach(function(q){
+      var b = document.createElement('button');
+      b.className = 'stt-chip';
+      b.textContent = q.label;
+      b.addEventListener('click', function(){
+        if (q.wa) { window.open(waLink(), '_blank'); return; }
+        input.value = q.send;
+        ask();
+      });
+      chips.appendChild(b);
+    });
+  }
+  function hideChips(){ chips.innerHTML = ''; }
+
+  function initChat(){
+    history = load();
+    msgs.innerHTML = '';
+    add('bot', GREETING);
+    if (history.length) {
+      for (var i = 0; i < history.length; i++) {
+        add(history[i].role === 'user' ? 'user' : 'bot', history[i].content);
+      }
+      waBtn.classList.add('show');
+      hideChips();
+    } else {
+      renderChips();
+    }
+  }
+
+  var inited = false;
   btn.addEventListener('click', function(){
     panel.classList.toggle('open');
-    if (panel.classList.contains('open') && !msgs.children.length) {
-      add('bot', 'Здравствуйте! Я консультант STT Performance. Подскажу по выхлопным системам, запчастям и установке. Что у вас за автомобиль?');
-    }
+    if (panel.classList.contains('open') && !inited) { initChat(); inited = true; }
   });
 
   function callAnthropic(){
@@ -2572,7 +2641,7 @@ if (aboutSection) statsObserver.observe(aboutSection);
         messages: history
       })
     }).then(function(r){
-      if (!r.ok) return r.text().then(function(t){ throw new Error('anthropic HTTP ' + r.status + ': ' + t.slice(0,150)); });
+      if (!r.ok) return r.text().then(function(t){ throw new Error('HTTP ' + r.status + ': ' + t.slice(0,150)); });
       return r.json();
     }).then(function(data){
       var reply = '';
@@ -2581,30 +2650,7 @@ if (aboutSection) statsObserver.observe(aboutSection);
           if (data.content[i].type === 'text') reply += data.content[i].text;
         }
       }
-      if (!reply) throw new Error('anthropic пустой ответ');
-      return reply;
-    });
-  }
-
-  function callOpenAI(){
-    var oaMsgs = [{role:'system', content:SYSTEM}].concat(history);
-    return fetch('https://blank.aigcbest.top/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + API_KEY
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 300,
-        messages: oaMsgs
-      })
-    }).then(function(r){
-      if (!r.ok) return r.text().then(function(t){ throw new Error('openai HTTP ' + r.status + ': ' + t.slice(0,150)); });
-      return r.json();
-    }).then(function(data){
-      var reply = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-      if (!reply) throw new Error('openai пустой ответ');
+      if (!reply) throw new Error('Пустой ответ');
       return reply;
     });
   }
@@ -2613,31 +2659,31 @@ if (aboutSection) statsObserver.observe(aboutSection);
     var text = input.value.trim();
     if (!text || busy) return;
     input.value = '';
+    hideChips();
     add('user', text);
     history.push({role:'user', content:text});
-    if (history.length > 10) history = history.slice(-10);
+    if (history.length > 12) history = history.slice(-12);
+    save();
 
     busy = true; send.disabled = true;
     var typing = add('bot stt-typing', '');
     typing.innerHTML = '<span></span><span></span><span></span>';
 
     callAnthropic()
-    .catch(function(e1){
-      return callOpenAI().catch(function(e2){
-        throw new Error(e1.message + ' | ' + e2.message);
-      });
-    })
     .then(function(reply){
       typing.remove();
       add('bot', reply);
       history.push({role:'assistant', content:reply});
+      save();
+      waBtn.classList.add('show');
     })
     .catch(function(e){
       typing.remove();
       var msg = e.message || String(e);
-      if (msg.indexOf('Failed to fetch') !== -1) msg += ' (похоже на CORS/сеть)';
+      if (msg.indexOf('Failed to fetch') !== -1) msg += ' (сеть/CORS)';
       add('err', 'Ошибка: ' + msg);
       history.pop();
+      save();
     })
     .finally(function(){ busy = false; send.disabled = false; input.focus(); });
   }
