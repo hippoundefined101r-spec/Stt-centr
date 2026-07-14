@@ -2557,6 +2557,58 @@ if (aboutSection) statsObserver.observe(aboutSection);
     }
   });
 
+  function callAnthropic(){
+    return fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 300,
+        system: SYSTEM,
+        messages: history
+      })
+    }).then(function(r){
+      if (!r.ok) return r.text().then(function(t){ throw new Error('anthropic HTTP ' + r.status + ': ' + t.slice(0,150)); });
+      return r.json();
+    }).then(function(data){
+      var reply = '';
+      if (data.content && data.content.length) {
+        for (var i = 0; i < data.content.length; i++) {
+          if (data.content[i].type === 'text') reply += data.content[i].text;
+        }
+      }
+      if (!reply) throw new Error('anthropic пустой ответ');
+      return reply;
+    });
+  }
+
+  function callOpenAI(){
+    var oaMsgs = [{role:'system', content:SYSTEM}].concat(history);
+    return fetch('https://blank.aigcbest.top/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + API_KEY
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 300,
+        messages: oaMsgs
+      })
+    }).then(function(r){
+      if (!r.ok) return r.text().then(function(t){ throw new Error('openai HTTP ' + r.status + ': ' + t.slice(0,150)); });
+      return r.json();
+    }).then(function(data){
+      var reply = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+      if (!reply) throw new Error('openai пустой ответ');
+      return reply;
+    });
+  }
+
   function ask(){
     var text = input.value.trim();
     if (!text || busy) return;
@@ -2569,41 +2621,21 @@ if (aboutSection) statsObserver.observe(aboutSection);
     var typing = add('bot stt-typing', '');
     typing.innerHTML = '<span></span><span></span><span></span>';
 
-    fetch(API_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': API_KEY,
-        'Authorization': 'Bearer ' + API_KEY,
-        'anthropic-version': '2023-06-01'
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 300,
-        system: SYSTEM,
-        messages: history
-      })
+    callAnthropic()
+    .catch(function(e1){
+      return callOpenAI().catch(function(e2){
+        throw new Error(e1.message + ' | ' + e2.message);
+      });
     })
-    .then(function(r){
-      if (!r.ok) return r.text().then(function(t){ throw new Error('HTTP ' + r.status + ': ' + t.slice(0,200)); });
-      return r.json();
-    })
-    .then(function(data){
+    .then(function(reply){
       typing.remove();
-      var reply = '';
-      if (data.content && data.content.length) {
-        for (var i = 0; i < data.content.length; i++) {
-          if (data.content[i].type === 'text') reply += data.content[i].text;
-        }
-      }
-      if (!reply) throw new Error('Пустой ответ: ' + JSON.stringify(data).slice(0,200));
       add('bot', reply);
       history.push({role:'assistant', content:reply});
     })
     .catch(function(e){
       typing.remove();
       var msg = e.message || String(e);
-      if (msg === 'Failed to fetch') msg = 'Failed to fetch — скорее всего CORS: прокси не пускает запросы из браузера. Нужен Cloudflare Worker.';
+      if (msg.indexOf('Failed to fetch') !== -1) msg += ' (похоже на CORS/сеть)';
       add('err', 'Ошибка: ' + msg);
       history.pop();
     })
