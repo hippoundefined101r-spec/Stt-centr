@@ -2572,16 +2572,54 @@ if (aboutSection) statsObserver.observe(aboutSection);
     return d;
   }
 
-  function waLink(){
-    var userMsgs = [];
-    for (var i = 0; i < history.length; i++) {
-      if (history[i].role === 'user') userMsgs.push(history[i].content);
-    }
-    var summary = userMsgs.slice(-3).join('; ').slice(0, 250);
-    var text = 'Ассаляму алейкум! Пишу с сайта STT.' + (summary ? ' Интересует: ' + summary : ' Хочу узнать по выхлопу/запчастям.');
-    return 'https://wa.me/' + WA_PHONE + '?text=' + encodeURIComponent(text);
+  function genericWaText(){
+    return 'Ассаляму алейкум! Пишу с сайта STT. Хочу узнать по выхлопу/запчастям.';
   }
-  waBtn.addEventListener('click', function(){ window.open(waLink(), '_blank'); });
+
+  function summarizeLead(){
+    if (!history.length) return Promise.resolve(genericWaText());
+    var dialog = history.map(function(m){
+      return (m.role === 'user' ? 'Клиент: ' : 'Мурад: ') + m.content;
+    }).join('\n').slice(-2000);
+    return fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 120,
+        system: 'Составь короткую заявку для менеджера автомагазина по диалогу. Формат строго: "Ассаляму алейкум! Пишу с сайта STT. Машина: <марка модель год, если известны>. Интересует: <суть запроса в 3-7 словах>." Если машина неизвестна — пропусти эту часть. Никаких лишних слов, только заявка одной строкой.',
+        messages: [{role:'user', content: dialog}]
+      })
+    }).then(function(r){
+      if (!r.ok) throw new Error('summary failed');
+      return r.json();
+    }).then(function(data){
+      var t = '';
+      if (data.content) for (var i=0;i<data.content.length;i++) if (data.content[i].type==='text') t += data.content[i].text;
+      t = t.trim();
+      if (!t || t.length > 400) throw new Error('bad summary');
+      return t;
+    }).catch(function(){ return genericWaText(); });
+  }
+
+  function openWa(){
+    var win = window.open('about:blank', '_blank');
+    waBtn.disabled = true;
+    var oldLabel = waBtn.innerHTML;
+    waBtn.innerHTML = 'Готовим заявку...';
+    summarizeLead().then(function(text){
+      var url = 'https://wa.me/' + WA_PHONE + '?text=' + encodeURIComponent(text);
+      if (win) { win.location = url; } else { window.location.href = url; }
+    }).finally(function(){
+      waBtn.disabled = false;
+      waBtn.innerHTML = oldLabel;
+    });
+  }
+  waBtn.addEventListener('click', openWa);
 
   var QUICK = [
     {label:'Прямоток на ВАЗ', send:'Интересует прямоток на ВАЗ'},
@@ -2596,7 +2634,7 @@ if (aboutSection) statsObserver.observe(aboutSection);
       b.className = 'stt-chip';
       b.textContent = q.label;
       b.addEventListener('click', function(){
-        if (q.wa) { window.open(waLink(), '_blank'); return; }
+        if (q.wa) { openWa(); return; }
         input.value = q.send;
         ask();
       });
